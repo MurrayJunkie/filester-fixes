@@ -18,7 +18,6 @@
     function downloadWithFullReferrer(target) {
         const a = document.createElement("a");
         a.href = target;
-        a.target = "_blank";
         a.referrerPolicy = "unsafe-url"
         a.download = "";
         document.body.appendChild(a);
