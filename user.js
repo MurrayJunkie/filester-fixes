@@ -60,5 +60,15 @@
         item.appendChild(a);
     }
 
+    if (location.pathname.startsWith("/d/")) {
+
+        // Insert thumbail as poster
+        const thumbUrl = document.querySelector("meta[property=\"og:image\"]").content
+        const vidOverlay = document.querySelector("#videoPlayOverlay")
+        const vid = document.querySelector("#videoPlayer")
+        vidOverlay.style.display = "none"
+        vid.poster = thumbUrl
+    }
+
     // Your code here...
 })();
