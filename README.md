@@ -10,6 +10,7 @@
 
 - Brings back the good old links to the album items. So you can open them in a new url or in the same page. HOWEVER you prefer to.
 - Inserts a referrer link to downloads to allow IDM to know the origin of the download for example.
+- Adds a thumbnail poster to the video player.
 
 
 ---
