@@ -65,8 +65,14 @@
         // Insert thumbail as poster
         const thumbUrl = document.querySelector("meta[property=\"og:image\"]").content
         const vidOverlay = document.querySelector("#videoPlayOverlay")
+        vidOverlay.setAttribute("onclick", "window.loadVideo(); window.videoPlayer.autoplay = true;")
+
+        vidOverlay.style.background = "none"
+        for (const child of vidOverlay.children) {
+            child.style.display = "none"
+        }
+
         const vid = document.querySelector("#videoPlayer")
-        vidOverlay.style.display = "none"
         vid.poster = thumbUrl
     }
 
