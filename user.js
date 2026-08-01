@@ -28,7 +28,8 @@
     // Patch window.open to insert a referrer url to downloads.
     ;((windowOpen) => {
         unsafeWindow.open = function (url, target, features) {
-            if (target === "_blank" && url.endsWith("?download=true")) {
+            const u = new URL(url, location.href)
+            if (target === "_blank" && u.searchParams.get("download") === "true") {
                 downloadWithFullReferrer(url)
                 return
             }
