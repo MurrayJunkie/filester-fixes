@@ -1,14 +1,17 @@
 // ==UserScript==
-// @name         Filester-Fixes
-// @namespace    http://tampermonkey.net/
-// @version      1.1.0
-// @description  Some patches to fix the website behaviour that I find annoying.
+// @name         Filester Fixes
+// @version      1.1.1
+// @description  Small quality-of-life improvements for Filester, including proper album item links, download referrers, video thumbnails, and various tweaks.
 // @author       Murray
+// @namespace    https://github.com/MurrayJunkie
+// @homepageURL  https://github.com/MurrayJunkie/filester-fixes
+// @supportURL   https://github.com/MurrayJunkie/filester-fixes/issues
 // @match        https://filester.me/*
 // @match        https://filester.sh/*
 // @match        https://filester.si/*
 // @match        https://filester.gg/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=filester.me
+// @license      MIT
 // @grant        unsafeWindow
 // ==/UserScript==
 
