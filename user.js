@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filester-Fixes
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.1.0
 // @description  Some patches to fix the website behaviour that I find annoying.
 // @author       Murray
 // @match        https://filester.me/*
@@ -54,7 +54,7 @@
 
                 clearInterval(interval);
                 resolve(element);
-            }, 100)
+            })
         });
     }
 
@@ -89,17 +89,15 @@
         for (const mutation of mutations) {
             for (const node of mutation.addedNodes) {
                 if (node.classList && !node.classList.contains("filester-fixed-item") && node.classList.contains("file-item")) {
-                    try {
-                        addLinkToItem(node);
-                    } catch (e) {
-                        console.error(e, node);
-                    }
+                    addLinkToItem(node);
                 }
             }
         }
     });
 
-    observer.observe(await waitForElement("body"), { childList: true, subtree: true });
+    waitForElement("body").then((body) => {
+        observer.observe(body, { childList: true, subtree: true });
+    })
 
     if (location.pathname.startsWith("/d/")) {
 
@@ -115,6 +113,15 @@
 
         const vid = document.querySelector("#videoPlayer")
         vid.poster = thumbUrl
+    }
+
+    else if (location.pathname.startsWith("/f/")) {
+
+        // Force the sort to be applied on page load, as the website doesn't do it
+        const sortSelect = await waitForElement("#sortSelect")
+        sortSelect.dispatchEvent(new Event("change", {
+            bubbles: true
+        }));
     }
 
     // Your code here...
