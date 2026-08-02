@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Filester-Fixes
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Some patches to fix the website behaviour that I find annoying.
 // @author       Murray
 // @match        https://filester.me/*
@@ -12,8 +12,16 @@
 // @grant        unsafeWindow
 // ==/UserScript==
 
-(function() {
+(async function () {
     'use strict';
+
+    const css = `
+        .filester-fixed-item {
+            position: relative; !important;
+        }
+    `
+
+    document.head.insertAdjacentHTML("beforeend", `<style>${css}</style>`)
 
     function downloadWithFullReferrer(target) {
         const a = document.createElement("a");
@@ -26,7 +34,7 @@
     }
 
     // Patch window.open to insert a referrer url to downloads.
-    ;((windowOpen) => {
+    ; ((windowOpen) => {
         unsafeWindow.open = function (url, target, features) {
             const u = new URL(url, location.href)
             if (target === "_blank" && u.searchParams.get("download") === "true") {
@@ -38,12 +46,23 @@
         }
     })(unsafeWindow.open)
 
-    // Insert links to album items instead of opening all in the current tab.
-    for (const item of document.querySelectorAll(".file-item")) {
-        const [ _, slug ] = /window\.location\.href='(.*?)'/.exec(item.getAttribute('onclick'))
+    function waitForElement(selector) {
+        return new Promise((resolve) => {
+            const interval = setInterval(() => {
+                const element = document.querySelector(selector);
+                if (element == null) return;
 
-        item.removeAttribute("onclick");
+                clearInterval(interval);
+                resolve(element);
+            }, 100)
+        });
+    }
+
+    function addLinkToItem(item) {
+        const [_, slug] = /window\.location\.href='(.*?)'/.exec(item.getAttribute('onclick'))
+
         const a = document.createElement("a");
+        a.addEventListener("click", (e) => e.stopPropagation());
         a.href = slug;
 
         Object.assign(a.style, {
@@ -59,7 +78,28 @@
         }
 
         item.appendChild(a);
+        item.classList.add("filester-fixed-item");
     }
+
+    for (const item of document.querySelectorAll(".file-item")) {
+        addLinkToItem(item);
+    }
+
+    const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (node.classList && !node.classList.contains("filester-fixed-item") && node.classList.contains("file-item")) {
+                    try {
+                        addLinkToItem(node);
+                    } catch (e) {
+                        console.error(e, node);
+                    }
+                }
+            }
+        }
+    });
+
+    observer.observe(await waitForElement("body"), { childList: true, subtree: true });
 
     if (location.pathname.startsWith("/d/")) {
 
